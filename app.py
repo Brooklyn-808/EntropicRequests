@@ -28,7 +28,7 @@ def verify_password(stored_hash, provided_password):
     return stored_hash == hash_password(provided_password)
 
 def main():
-    st.title("Limited Request Streamlit App")
+    st.title("Entropic Requests")
 
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
