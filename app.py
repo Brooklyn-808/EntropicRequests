@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import hashlib
 import uuid
+import datetime
 
 USERS_FILE = 'users.json'
 REQUESTS_FILE = 'requests.json'
@@ -11,11 +12,14 @@ def load_data(filename):
     try:
         with open(filename, 'r') as f:
             return json.load(f)
-    except FileNotFoundError:
-        return {} if filename == USERS_FILE else []
-    except json.JSONDecodeError:
-        st.error(f"Error decoding JSON from {filename}. Please check the file format.")
-        return {} if filename == USERS_FILE else []
+    except (FileNotFoundError, json.JSONDecodeError):
+        st.warning(f"File '{filename}' not found or corrupted. Initializing as empty.")
+        if filename == USERS_FILE:
+            return {}
+        elif filename == REQUESTS_FILE:
+            return {}
+        else:
+            return {}
 
 def save_data(data, filename):
     with open(filename, 'w') as f:
@@ -102,12 +106,12 @@ def main():
             if requests_left > 0:
                 if user_request_text:
                     request_id = str(uuid.uuid4())
-                    requests_data.append({
+                    requests_data[request_id] = {
                         "id": request_id,
                         "username": st.session_state.username,
                         "request_text": user_request_text,
-                        "timestamp": st.datetime.now().isoformat()
-                    })
+                        "timestamp": datetime.datetime.now().isoformat()
+                    }
                     save_data(requests_data, REQUESTS_FILE)
 
                     users[st.session_state.username]["requests_left"] -= 1
@@ -122,9 +126,10 @@ def main():
 
         st.subheader("Your Past Requests")
         user_specific_requests = [
-            req for req in requests_data if req["username"] == st.session_state.username
+            req for req in requests_data.values() if req["username"] == st.session_state.username
         ]
         if user_specific_requests:
+            user_specific_requests.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
             for req in user_specific_requests:
                 st.write(f"**Request ID:** {req['id']}")
                 st.write(f"**Submitted:** {req['timestamp']}")
