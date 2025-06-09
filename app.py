@@ -124,7 +124,7 @@ def main():
             else:
                 st.error("You have no requests left this month. Please wait for your requests to be refilled.")
 
-        # Conditional display for "Entropy" user
+
         if st.session_state.username == "Entropy":
             st.subheader("All Past Requests (Admin View)")
             displayed_requests = list(requests_data.values())
@@ -138,7 +138,7 @@ def main():
             displayed_requests.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
             for req in displayed_requests:
                 st.write(f"**Request ID:** {req['id']}")
-                # Only show username if it's the admin view
+
                 if st.session_state.username == "Entropy":
                     st.write(f"**User:** {req['username']}")
                 st.write(f"**Submitted:** {req['timestamp']}")
