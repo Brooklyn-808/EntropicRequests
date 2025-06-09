@@ -77,7 +77,7 @@ def main():
                         st.session_state.logged_in = True
                         st.session_state.username = username
                         st.success(f"Welcome, {username}!")
-                        st.experimental_rerun()
+                        st.rerun()
                     else:
                         st.error("Incorrect password.")
                 else:
@@ -87,7 +87,7 @@ def main():
         if st.sidebar.button("Logout"):
             st.session_state.logged_in = False
             st.session_state.username = None
-            st.experimental_rerun()
+            st.rerun()
 
         st.header(f"Welcome, {st.session_state.username}!")
 
@@ -114,7 +114,7 @@ def main():
                     save_data(users, USERS_FILE)
 
                     st.success("Your request has been submitted!")
-                    st.experimental_rerun()
+                    st.rerun()
                 else:
                     st.warning("Please enter your request.")
             else:
