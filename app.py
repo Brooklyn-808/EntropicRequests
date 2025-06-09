@@ -124,19 +124,31 @@ def main():
             else:
                 st.error("You have no requests left this month. Please wait for your requests to be refilled.")
 
-        st.subheader("Your Past Requests")
-        user_specific_requests = [
-            req for req in requests_data.values() if req["username"] == st.session_state.username
-        ]
-        if user_specific_requests:
-            user_specific_requests.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
-            for req in user_specific_requests:
+        # Conditional display for "Entropy" user
+        if st.session_state.username == "Entropy":
+            st.subheader("All Past Requests (Admin View)")
+            displayed_requests = list(requests_data.values())
+        else:
+            st.subheader("Your Past Requests")
+            displayed_requests = [
+                req for req in requests_data.values() if req["username"] == st.session_state.username
+            ]
+
+        if displayed_requests:
+            displayed_requests.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+            for req in displayed_requests:
                 st.write(f"**Request ID:** {req['id']}")
+                # Only show username if it's the admin view
+                if st.session_state.username == "Entropy":
+                    st.write(f"**User:** {req['username']}")
                 st.write(f"**Submitted:** {req['timestamp']}")
                 st.write(f"**Content:** {req['request_text']}")
                 st.markdown("---")
         else:
-            st.info("You haven't submitted any requests yet.")
+            if st.session_state.username == "Entropy":
+                st.info("No requests have been submitted by any user yet.")
+            else:
+                st.info("You haven't submitted any requests yet.")
 
 if __name__ == "__main__":
     main()
